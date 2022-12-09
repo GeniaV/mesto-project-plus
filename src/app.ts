@@ -2,6 +2,7 @@ import path from 'path';
 import express from 'express';
 import mongoose from 'mongoose';
 import userRouter from './routes/users';
+import cardRouter from './routes/cards';
 
 const { PORT = 3000 } = process.env;
 
@@ -21,6 +22,8 @@ app.use((req, res, next) => {
   };
   next();
 });
+
+app.use('/cards', cardRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

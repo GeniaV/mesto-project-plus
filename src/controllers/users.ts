@@ -6,9 +6,13 @@ export const getUsers = (req: Request, res: Response) => User.find({})
   .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 
 export const getUsersById = (req: Request, res: Response) => {
-  const { _id } = req.params;
-  User.find({ userID: _id })
-    .then((users) => res.send({ data: users }))
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Пользователь не найден'));
+      }
+      return res.send({ data: user });
+    })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
