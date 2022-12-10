@@ -1,6 +1,7 @@
 import path from 'path';
 import express from 'express';
 import mongoose from 'mongoose';
+import errorsMiddleware from './middlwares/errors.middlware';
 import userRouter from './routes/users';
 import cardRouter from './routes/cards';
 
@@ -27,6 +28,6 @@ app.use('/cards', cardRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(PORT, () => {
+app.use(errorsMiddleware);
 
-});
+app.listen(PORT);
