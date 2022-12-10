@@ -26,7 +26,6 @@
     "@typescript-eslint/eslint-plugin": "^5.45.1",
     "@typescript-eslint/parser": "^5.45.1",
     "express": "^4.18.2",
-    "mongodb": "^4.12.1",
     "mongoose": "^6.5.0"
   }
 }

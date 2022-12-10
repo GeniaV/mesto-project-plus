@@ -14,14 +14,14 @@ app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use('/users', userRouter);
-
 app.use((req, res, next) => {
   req.user = {
     _id: '639245a72c728e8fb4030bfb',
   };
   next();
 });
+
+app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
 

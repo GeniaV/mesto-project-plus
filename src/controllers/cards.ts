@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import Card from '../models/cards';
 
 export const getCards = (req: Request, res: Response) => Card.find({})
@@ -20,5 +21,25 @@ export const deleteCardById = (req: Request, res: Response) => {
       }
       return res.send({ data: card });
     })
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+
+export const likeCard = (req: Request, res: Response) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((card) => res.send({ data: card }))
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+
+export const dislikeCard = (req: Request, res: Response) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id as mongoose.ObjectId } },
+    { new: true },
+  )
+    .then((card) => res.send({ data: card }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
