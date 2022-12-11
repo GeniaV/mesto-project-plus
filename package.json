@@ -25,6 +25,7 @@
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.45.1",
     "@typescript-eslint/parser": "^5.45.1",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^6.5.0"
   }

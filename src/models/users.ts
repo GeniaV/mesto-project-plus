@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose';
+import { httpRegex } from '../constants';
 
 interface IUser {
   name: string,
@@ -22,6 +23,11 @@ const userSchema = new Schema<IUser>({
   avatar: {
     type: String,
     required: true,
+    validate: {
+      validator(v: string) {
+        return (!v || !v.trim().length) || httpRegex.test(v);
+      },
+    },
   },
 });
 
