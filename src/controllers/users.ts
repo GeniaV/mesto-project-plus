@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import bcrypt from 'bcrypt';
 import User from '../models/users';
 import NotFoundError from '../errors/not_found_error';
 import { BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE_ERROR, INTERNAL_SERVER_STATUS_CODE } from '../constants';
@@ -24,8 +25,23 @@ export const getUsersById = (req: Request, res: Response) => {
 };
 
 export const createUser = (req: Request, res: Response) => {
-  const { name, about, avatar } = req.body;
-  return User.create({ name, about, avatar })
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create(
+      {
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      },
+    ))
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
