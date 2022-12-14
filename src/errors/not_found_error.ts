@@ -1,12 +1,12 @@
-import { NOT_FOUND_STATUS_CODE_ERROR } from '../constants';
+import { UNAUTHORIZED } from '../constants';
 
-class NotFoundError extends Error {
+class UnauthorizedError extends Error {
   statusCode: number;
 
   constructor(message: string) {
     super(message);
-    this.statusCode = NOT_FOUND_STATUS_CODE_ERROR;
+    this.statusCode = UNAUTHORIZED;
   }
 }
 
-export default NotFoundError;
+export default UnauthorizedError;

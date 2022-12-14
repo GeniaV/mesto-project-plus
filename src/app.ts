@@ -2,6 +2,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
 import userRouter from './routes/users';
 import cardRouter from './routes/cards';
 
@@ -29,5 +30,7 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cookieParser());
 
 app.listen(PORT);
