@@ -3,11 +3,13 @@ import {
   Schema,
   Model,
   Document,
+  ObjectId,
 } from 'mongoose';
 import isEmail from 'validator/lib/isEmail';
 import bcrypt from 'bcrypt';
 import { httpRegex } from '../constants';
 import UnauthorizedError from '../errors/unauthorized_error';
+import NotFoundError from '../errors/not_found_error';
 
 interface IUser {
   name?: string,
@@ -23,7 +25,13 @@ interface IUserModel extends Model<IUser> {
     email: string,
     // eslint-disable-next-line no-unused-vars
     password: string
-  ) => Promise<Document<unknown, any, IUser>>
+  ) => Promise<Document<unknown, any, IUser>>;
+  findUserAndUpdateById: (
+    // eslint-disable-next-line no-unused-vars
+    id: string | ObjectId,
+    // eslint-disable-next-line no-unused-vars
+    params: { name?: string, about?: string, avatar?: string}
+  ) => Promise<Document<unknown, any, IUser>>;
 }
 
 const userSchema = new Schema<IUser, IUserModel>({
@@ -75,6 +83,20 @@ userSchema.static('findUserByCredentials', function findUserByCredentials(email:
           }
           return user;
         });
+    });
+});
+
+userSchema.static('findUserAndUpdateById', function findUserAndUpdateById(id: string | ObjectId, params: { name?: string, about?: string, avatar?: string }) {
+  return this.findByIdAndUpdate(
+    id,
+    params,
+    { new: true, runValidators: true },
+  )
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+      return user;
     });
 });
 

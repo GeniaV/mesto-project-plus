@@ -69,12 +69,7 @@ export const createUser = (req: Request, res: Response) => {
 
 export const updateUser = (req: Request, res: Response) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    { name, about },
-    { new: true, runValidators: true },
-  )
-    .orFail(new NotFoundError('Пользователь не найден'))
+  User.findUserAndUpdateById(req.user._id, { name, about })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -89,16 +84,11 @@ export const updateUser = (req: Request, res: Response) => {
 
 export const updateAvatar = (req: Request, res: Response) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    { avatar },
-    { new: true, runValidators: true },
-  )
-    .orFail(new NotFoundError('Пользователь не найден'))
+  User.findUserAndUpdateById(req.user._id, { avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS_CODE).send({ message: 'Переданы некорректные данные при обновлении аватара' });
+        res.status(BAD_REQUEST_STATUS_CODE).send({ message: 'Переданы некорректные данные для обновления аватара' });
       }
       if (err.name === 'CastError') {
         res.status(NOT_FOUND_STATUS_CODE_ERROR).send({ message: 'Пользователь по указанному _id не найден' });
