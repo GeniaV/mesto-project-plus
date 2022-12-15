@@ -8,6 +8,7 @@ import {
   BAD_REQUEST_STATUS_CODE,
   NOT_FOUND_STATUS_CODE_ERROR,
   INTERNAL_SERVER_STATUS_CODE,
+  UNAUTHORIZED,
   EXPIRED_TOKEN_MS,
 } from '../constants';
 
@@ -111,5 +112,5 @@ export const login = (req: Request, res: Response) => {
         res.send({ token });
       }
     })
-    .catch(() => res.status(INTERNAL_SERVER_STATUS_CODE).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => res.status(UNAUTHORIZED).send({ message: err.message }));
 };

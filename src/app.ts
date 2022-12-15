@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/users';
 import cardRouter from './routes/cards';
+import { login, createUser } from './controllers/users';
 
 dotenv.config();
 
@@ -28,6 +29,10 @@ app.use((req, res, next) => {
 app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
+
+app.post('/signin', login);
+
+app.post('/signup', createUser);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
