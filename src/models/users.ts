@@ -28,7 +28,7 @@ interface IUserModel extends Model<IUser> {
   ) => Promise<Document<unknown, any, IUser>>;
   findUserAndUpdateById: (
     // eslint-disable-next-line no-unused-vars
-    id: string | ObjectId,
+    id: ObjectId,
     // eslint-disable-next-line no-unused-vars
     params: { name?: string, about?: string, avatar?: string}
   ) => Promise<Document<unknown, any, IUser>>;
@@ -86,7 +86,7 @@ userSchema.static('findUserByCredentials', function findUserByCredentials(email:
     });
 });
 
-userSchema.static('findUserAndUpdateById', function findUserAndUpdateById(id: string | ObjectId, params: { name?: string, about?: string, avatar?: string }) {
+userSchema.static('findUserAndUpdateById', function findUserAndUpdateById(id: ObjectId, params: { name?: string, about?: string, avatar?: string }) {
   return this.findByIdAndUpdate(
     id,
     params,

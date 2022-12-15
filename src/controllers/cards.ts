@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
 import Card from '../models/cards';
 import NotFoundError from '../errors/not_found_error';
 import { BAD_REQUEST_STATUS_CODE, NOT_FOUND_STATUS_CODE_ERROR, INTERNAL_SERVER_STATUS_CODE } from '../constants';
@@ -63,7 +62,7 @@ export const likeCard = (req: Request, res: Response) => {
 export const dislikeCard = (req: Request, res: Response) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id as mongoose.ObjectId } },
+    { $pull: { likes: req.user._id } },
     { new: true },
   )
     .orFail(new NotFoundError('Карточка не найдена'))

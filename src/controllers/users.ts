@@ -36,6 +36,22 @@ export const getUsersById = (req: Request, res: Response) => {
     });
 };
 
+export const getUser = (req: Request, res: Response) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(NOT_FOUND_STATUS_CODE_ERROR).send({ message: 'Пользователь по указанному _id не найден' });
+      }
+      return res.status(INTERNAL_SERVER_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+    });
+};
+
 export const createUser = (req: Request, res: Response) => {
   const {
     name,

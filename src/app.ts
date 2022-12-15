@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import userRouter from './routes/users';
 import cardRouter from './routes/cards';
 import { login, createUser } from './controllers/users';
+import auth from './middlewares/auth';
 
 dotenv.config();
 
@@ -19,20 +20,15 @@ app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(`${DB_CONN}`);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '639245a72c728e8fb4030bfb',
-  };
-  next();
-});
+app.post('/signin', login);
+
+app.post('/signup', createUser);
+
+app.use(auth);
 
 app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
-
-app.post('/signin', login);
-
-app.post('/signup', createUser);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
