@@ -5,10 +5,10 @@ import jwt from 'jsonwebtoken';
 import User from '../models/users';
 import NotFoundError from '../errors/not_found_error';
 import {
-  BAD_REQUEST_STATUS_CODE,
-  NOT_FOUND_STATUS_CODE_ERROR,
-  INTERNAL_SERVER_STATUS_CODE,
-  UNAUTHORIZED,
+  BAD_REQUEST_ERROR_STATUS_CODE,
+  NOT_FOUND_ERROR_STATUS_CODE,
+  INTERNAL_SERVER_ERROR_STATUS_CODE,
+  UNAUTHORIZED_ERROR_STATUS_CODE,
   EXPIRED_TOKEN_MS,
 } from '../constants';
 
@@ -18,7 +18,7 @@ const { JWT_SECRET } = process.env;
 
 export const getUsers = (req: Request, res: Response) => User.find({})
   .then((users) => res.send({ data: users }))
-  .catch(() => res.status(INTERNAL_SERVER_STATUS_CODE).send({ message: 'На сервере произошла ошибка' }));
+  .catch(() => res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' }));
 
 export const getUsersById = (req: Request, res: Response) => {
   User.findById(req.params.userId)
@@ -30,9 +30,9 @@ export const getUsersById = (req: Request, res: Response) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_STATUS_CODE_ERROR).send({ message: 'Пользователь по указанному _id не найден' });
+        res.status(NOT_FOUND_ERROR_STATUS_CODE).send({ message: 'Пользователь по указанному _id не найден' });
       }
-      return res.status(INTERNAL_SERVER_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -46,9 +46,9 @@ export const getUser = (req: Request, res: Response) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_STATUS_CODE_ERROR).send({ message: 'Пользователь по указанному _id не найден' });
+        res.status(NOT_FOUND_ERROR_STATUS_CODE).send({ message: 'Пользователь по указанному _id не найден' });
       }
-      return res.status(INTERNAL_SERVER_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -78,9 +78,9 @@ export const createUser = (req: Request, res: Response) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });
+        res.status(BAD_REQUEST_ERROR_STATUS_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });
       }
-      return res.status(INTERNAL_SERVER_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -90,12 +90,12 @@ export const updateUser = (req: Request, res: Response) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS_CODE).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+        res.status(BAD_REQUEST_ERROR_STATUS_CODE).send({ message: 'Переданы некорректные данные при обновлении профиля' });
       }
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_STATUS_CODE_ERROR).send({ message: 'Пользователь по указанному _id не найден' });
+        res.status(NOT_FOUND_ERROR_STATUS_CODE).send({ message: 'Пользователь по указанному _id не найден' });
       }
-      return res.status(INTERNAL_SERVER_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -105,12 +105,12 @@ export const updateAvatar = (req: Request, res: Response) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_STATUS_CODE).send({ message: 'Переданы некорректные данные для обновления аватара' });
+        res.status(BAD_REQUEST_ERROR_STATUS_CODE).send({ message: 'Переданы некорректные данные для обновления аватара' });
       }
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_STATUS_CODE_ERROR).send({ message: 'Пользователь по указанному _id не найден' });
+        res.status(NOT_FOUND_ERROR_STATUS_CODE).send({ message: 'Пользователь по указанному _id не найден' });
       }
-      return res.status(INTERNAL_SERVER_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -128,5 +128,5 @@ export const login = (req: Request, res: Response) => {
         res.send({ token });
       }
     })
-    .catch((err) => res.status(UNAUTHORIZED).send({ message: err.message }));
+    .catch((err) => res.status(UNAUTHORIZED_ERROR_STATUS_CODE).send({ message: err.message }));
 };
