@@ -8,9 +8,12 @@ dotenv.config();
 
 const { JWT_SECRET } = process.env;
 
+interface UserPayload {
+  _id: ObjectId;
+}
+
 export default (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
-
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return res.status(UNAUTHORIZED_ERROR_STATUS_CODE).send({ message: 'Необходима авторизация' });
   }
@@ -18,10 +21,10 @@ export default (req: Request, res: Response, next: NextFunction) => {
   const token = authorization.replace('Bearer ', '');
   let payload;
   try {
-    payload = jwt.verify(token, JWT_SECRET as string);
+    payload = jwt.verify(token, JWT_SECRET as string) as UserPayload;
   } catch (err) {
     return res.status(UNAUTHORIZED_ERROR_STATUS_CODE).send({ message: 'Необходима авторизация' });
   }
-  req.user = { _id: payload as ObjectId };
+  req.user = payload;
   return next();
 };

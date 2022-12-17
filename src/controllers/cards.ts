@@ -1,7 +1,13 @@
 import { Request, Response } from 'express';
 import Card from '../models/cards';
 import NotFoundError from '../errors/not_found_error';
-import { BAD_REQUEST_ERROR_STATUS_CODE, NOT_FOUND_ERROR_STATUS_CODE, INTERNAL_SERVER_ERROR_STATUS_CODE } from '../constants';
+import
+{
+  BAD_REQUEST_ERROR_STATUS_CODE,
+  NOT_FOUND_ERROR_STATUS_CODE,
+  INTERNAL_SERVER_ERROR_STATUS_CODE,
+  FORBIDDEN_ERROR_STATUS_CODE,
+} from '../constants';
 
 export const getCards = (req: Request, res: Response) => Card.find({})
   .then((cards) => res.send({ data: cards }))
@@ -25,12 +31,15 @@ export const createCard = (req: Request, res: Response) => {
 };
 
 export const deleteCardById = (req: Request, res: Response) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
       }
-      return res.send({ data: card });
+      if (card.owner.toString() === req.user._id.toString()) {
+        card.delete();
+        return res.send({ message: 'Карточка удалена' });
+      } return res.status(FORBIDDEN_ERROR_STATUS_CODE).send({ message: 'Недостаточно прав для удаления карточки' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
