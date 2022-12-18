@@ -8,6 +8,7 @@ import cardRouter from './routes/cards';
 import { login, createUser } from './controllers/users';
 import auth from './middlewares/auth';
 import { requestLogger, errorLogger } from './middlewares/logger';
+import errorHandler from './middlewares/errors';
 
 dotenv.config();
 
@@ -38,5 +39,7 @@ app.use(errorLogger);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cookieParser());
+
+app.use(errorHandler);
 
 app.listen(PORT);

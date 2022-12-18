@@ -1,58 +1,49 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import User from '../models/users';
 import NotFoundError from '../errors/not_found_error';
-import {
-  BAD_REQUEST_ERROR_STATUS_CODE,
-  NOT_FOUND_ERROR_STATUS_CODE,
-  INTERNAL_SERVER_ERROR_STATUS_CODE,
-  UNAUTHORIZED_ERROR_STATUS_CODE,
-  EXPIRED_TOKEN_MS,
-} from '../constants';
+import BadRequestError from '../errors/bad_request_error';
+import ConflictError from '../errors/conflict_error';
+import { EXPIRED_TOKEN_MS } from '../constants';
 
 dotenv.config();
 
 const { JWT_SECRET } = process.env;
 
-export const getUsers = (req: Request, res: Response) => User.find({})
+export const getUsers = (req: Request, res: Response, next: NextFunction) => User.find({})
   .then((users) => res.send({ data: users }))
-  .catch(() => res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' }));
+  .catch(next);
 
-export const getUsersById = (req: Request, res: Response) => {
+export const getUsersById = (req: Request, res: Response, next: NextFunction) => {
   User.findById(req.params.userId)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      }
-      return res.send({ data: user });
-    })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_ERROR_STATUS_CODE).send({ message: 'Пользователь по указанному _id не найден' });
+        next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
-      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      next(err);
     });
 };
 
-export const getUser = (req: Request, res: Response) => {
+export const getUser = (req: Request, res: Response, next: NextFunction) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не найден');
+        next(new NotFoundError('Пользователь не найден'));
       }
       return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_ERROR_STATUS_CODE).send({ message: 'Пользователь по указанному _id не найден' });
+        next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
-      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      next(err);
     });
 };
 
-export const createUser = (req: Request, res: Response) => {
+export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const {
     name,
     about,
@@ -70,51 +61,49 @@ export const createUser = (req: Request, res: Response) => {
         password: hash,
       },
     ))
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      }
-      return res.send({ data: user });
-    })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR_STATUS_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь уже существует'));
       }
-      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+      }
+      next(err);
     });
 };
 
-export const updateUser = (req: Request, res: Response) => {
+export const updateUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, about } = req.body;
   User.findUserAndUpdateById(req.user._id, { name, about })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR_STATUS_CODE).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
       }
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_ERROR_STATUS_CODE).send({ message: 'Пользователь по указанному _id не найден' });
+        next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
-      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      next(err);
     });
 };
 
-export const updateAvatar = (req: Request, res: Response) => {
+export const updateAvatar = (req: Request, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
   User.findUserAndUpdateById(req.user._id, { avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR_STATUS_CODE).send({ message: 'Переданы некорректные данные для обновления аватара' });
+        next(new BadRequestError('Переданы некорректные данные для обновления аватара'));
       }
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND_ERROR_STATUS_CODE).send({ message: 'Пользователь по указанному _id не найден' });
+        next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
-      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({ message: 'На сервере произошла ошибка' });
+      next(err);
     });
 };
 
-export const login = (req: Request, res: Response) => {
+export const login = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
@@ -128,5 +117,5 @@ export const login = (req: Request, res: Response) => {
         res.send({ token });
       }
     })
-    .catch((err) => res.status(UNAUTHORIZED_ERROR_STATUS_CODE).send({ message: err.message }));
+    .catch(next);
 };

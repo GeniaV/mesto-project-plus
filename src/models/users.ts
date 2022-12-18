@@ -102,4 +102,6 @@ userSchema.static('findUserAndUpdateById', function findUserAndUpdateById(id: Ob
     });
 });
 
+userSchema.index({ email: 1 }, { unique: true });
+
 export default model<IUser, IUserModel>('user', userSchema);
