@@ -7,6 +7,7 @@ import userRouter from './routes/users';
 import cardRouter from './routes/cards';
 import { login, createUser } from './controllers/users';
 import auth from './middlewares/auth';
+import { requestLogger, errorLogger } from './middlewares/logger';
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(`${DB_CONN}`);
 
+app.use(requestLogger);
+
 app.post('/signin', login);
 
 app.post('/signup', createUser);
@@ -29,6 +32,8 @@ app.use(auth);
 app.use('/users', userRouter);
 
 app.use('/cards', cardRouter);
+
+app.use(errorLogger);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
