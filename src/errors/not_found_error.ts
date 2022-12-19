@@ -1,11 +1,11 @@
-import { NOT_FOUND_STATUS_CODE_ERROR } from '../constants';
+import { NOT_FOUND_ERROR_STATUS_CODE } from '../constants';
 
 class NotFoundError extends Error {
   statusCode: number;
 
   constructor(message: string) {
     super(message);
-    this.statusCode = NOT_FOUND_STATUS_CODE_ERROR;
+    this.statusCode = NOT_FOUND_ERROR_STATUS_CODE;
   }
 }
 
