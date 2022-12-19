@@ -28,6 +28,7 @@ export const deleteCardById = (req: Request, res: Response, next: NextFunction) 
       }
       if (card && card.owner.toString() === req.user._id.toString()) {
         card.delete();
+        res.send({ message: 'Карточка удалена' });
       } next(new ForbiddenError('Недостаточно прав для удаления карточки'));
     })
     .catch((err) => {
