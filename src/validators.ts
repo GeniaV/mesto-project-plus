@@ -20,7 +20,7 @@ export const validateAuthentication = celebrate({
 
 export const validateUserId = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().length(24),
+    userId: Joi.string().required().length(24).hex(),
   }),
 });
 
@@ -46,12 +46,12 @@ export const validateCardBody = celebrate({
 
 export const validateCardId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    cardId: Joi.string().required().length(24).hex(),
   }),
 });
 
-export const validateLikesCardBody = celebrate({
+export const validateLikesCardParams = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    cardId: Joi.string().required().length(24).hex(),
   }),
 });

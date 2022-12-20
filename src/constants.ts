@@ -7,3 +7,4 @@ export const CONFLICT_STATUS_CODE = 409;
 /* eslint-disable */
 export const httpRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
 export const EXPIRED_TOKEN_MS = 3600000 * 24 * 7;
+export const defaultJwt = '75c609a6fa750ad11f727f8120a7573464d6a4f7432ba618e5d4babf26e3f896';

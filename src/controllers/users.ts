@@ -6,11 +6,11 @@ import User from '../models/users';
 import NotFoundError from '../errors/not_found_error';
 import BadRequestError from '../errors/bad_request_error';
 import ConflictError from '../errors/conflict_error';
-import { EXPIRED_TOKEN_MS } from '../constants';
+import { EXPIRED_TOKEN_MS, defaultJwt } from '../constants';
 
 dotenv.config();
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET = defaultJwt } = process.env;
 
 export const getUsers = (req: Request, res: Response, next: NextFunction) => User.find({})
   .then((users) => res.send({ data: users }))

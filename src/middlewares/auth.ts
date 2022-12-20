@@ -3,10 +3,11 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { ObjectId } from 'mongoose';
 import UnauthorizedError from '../errors/unauthorized_error';
+import { defaultJwt } from '../constants';
 
 dotenv.config();
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET = defaultJwt } = process.env;
 
 interface UserPayload {
   _id: ObjectId;
