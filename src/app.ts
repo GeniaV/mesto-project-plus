@@ -1,4 +1,3 @@
-import path from 'path';
 import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
@@ -14,7 +13,7 @@ import { validateUserBody, validateAuthentication } from './validators';
 
 dotenv.config();
 
-const { PORT, DB_CONN } = process.env;
+const { PORT = 3000, DB_CONN = 'mongodb://localhost:27017/mestodb' } = process.env;
 
 const app = express();
 
@@ -39,8 +38,6 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 app.use(errorLogger);
-
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(errors());
 

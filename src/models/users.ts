@@ -88,7 +88,10 @@ userSchema.static('findUserByCredentials', function findUserByCredentials(email:
     });
 });
 
-userSchema.static('findUserAndUpdateById', function findUserAndUpdateById(id: ObjectId, params: { name?: string, about?: string, avatar?: string }) {
+userSchema.static('findUserAndUpdateById', function findUserAndUpdateById(
+  id: ObjectId,
+  params: { name?: string, about?: string, avatar?: string },
+) {
   return this.findByIdAndUpdate(
     id,
     params,
